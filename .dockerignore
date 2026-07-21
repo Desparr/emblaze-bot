@@ -1,0 +1,38 @@
+# .dockerignore -- keeps the build context small and secrets out of the image.
+# See starthere/building/containerizing.md.
+
+# Version control and CI (never needed at runtime)
+.git
+.gitignore
+.gitattributes
+.github
+
+# Local env / secrets -- never bake these into an image (keep .env.example)
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# Python cruft
+__pycache__
+*.pyc
+*.pyo
+.venv
+venv
+.pytest_cache
+.mypy_cache
+
+# Docs, tests, and local scripts -- not part of the running app
+docs
+*.md
+!README.md
+tests
+scripts
+instance
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+.vscode
+.idea

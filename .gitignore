@@ -1,0 +1,47 @@
+# .gitignore -- Emtech app-author contract (Emtech-LLC/starthere).
+# Golden rule: never commit a secret. All config/secrets come from environment
+# variables; ship a value-free .env.example. Real values are injected by
+# Russell at deploy time. See starthere/building/secrets-and-config.md.
+
+# --- Secrets & local env (NEVER commit real values) ---
+.env
+.env.*
+!.env.example          # the documented, value-free template IS committed
+*.key
+*.pem
+*.p12
+*.pfx
+*tokens*.json
+instance/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+*.egg-info/
+
+# --- Terraform (defensive -- this app repo has no infra/) ---
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+
+# --- Logs & temp ---
+*.log
+tmp/
+.cache/
+
+# --- OS cruft ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Editor / IDE ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
