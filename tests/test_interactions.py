@@ -191,14 +191,14 @@ class SubmitQuoteTests(unittest.TestCase):
         patcher = mock.patch("slack_bot.interactions._run_in_background", side_effect=_run_sync)
         patcher.start()
         self.addCleanup(patcher.stop)
-        # MockPlannerAdapter seeds exactly one planning-stage project + two clients.
+        # MockPlannerAdapter seeds exactly one planning-stage project + two teams.
         self.seed_project = self.adapter.list_projects(status="planning")[0]
-        self.client_id = self.adapter.list_clients()[0]["id"]
+        self.team_id = self.adapter.list_teams()[0]["id"]
 
     def _values(self, *, submit_now: bool):
         values = dict(QUOTE_VALUES_TEMPLATE)
         values["plan_block"] = {"plan_input": _select_value(self.seed_project["id"])}
-        values["client_block"] = {"client_input": _select_value(self.client_id)}
+        values["team_block"] = {"team_input": _select_value(self.team_id)}
         values["submit_now_block"] = {"submit_now_input": _checkbox_value(submit_now)}
         return values
 

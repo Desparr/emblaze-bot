@@ -31,7 +31,7 @@ Every one of the 13 `PlannerAdapter` abstract methods is implemented, calling on
 path each (full map in the class docstring), with responses reshaped to match
 `MockPlannerAdapter`'s return shapes exactly:
 
-- Simple reads (`get_users`, `list_projects`, `list_clients`, `get_project`, `get_client`,
+- Simple reads (`get_users`, `list_projects`, `list_teams`, `get_project`, `get_team`,
   `list_quotes`, `get_quote`) are assumed to already return the right shape and are passed
   through as-is; a 404 is translated to `KeyError`, matching the mock's contract.
 - `get_tier_weekly_rates` reshapes an assumed `{"services": [{"tier": N, "weeklyRate": R}, ...]}`

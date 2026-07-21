@@ -14,7 +14,7 @@ Postgres/pgvector (requested from Russell). The new-app checklist and app contra
 
 The Emblaze Slack bot is not a system of record. Per the Emblaze Product Handbook (Part 3.2,
 "Reuse, don't reimplement"), the bot's entire job is to let Slack drive the *existing* Emblaze
-planner -- plans, quotes, clients -- which already lives in DynamoDB table
+planner -- plans, quotes, teams -- which already lives in DynamoDB table
 `emblaze-prod-planner`, owned and served by `planner_api.py` in the `emblaze` repo. The handbook
 is explicit that the bot should call the same functions/endpoints `planner_api.py` already
 exposes, not stand up parallel storage.
@@ -29,7 +29,7 @@ against the real API, since that access still hasn't arrived.
 ## Decision
 
 This app provisions **no datastore of its own** -- no DynamoDB table, no Postgres request to
-Russell. All durable planner state (plans, quotes, clients, the quote-number counter, the user
+Russell. All durable planner state (plans, quotes, teams, the quote-number counter, the user
 allowlist) continues to live in the existing `emblaze-prod-planner` DynamoDB table and the
 `emblaze-prod/sso-users` secret, both owned by the `emblaze` app. This bot is a stateless client
 of that data via `PlannerAdapter` (mock today, real once merged/wired), exactly per the

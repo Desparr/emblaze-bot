@@ -104,14 +104,14 @@ class ListProjectsTests(unittest.TestCase):
         self.assertIsNone(session.calls[0]["params"])
 
 
-class ListClientsTests(unittest.TestCase):
-    def test_calls_clients_endpoint(self):
-        body = [{"id": "client-1", "body": {"name": "Amazon"}}]
+class ListTeamsTests(unittest.TestCase):
+    def test_calls_teams_endpoint(self):
+        body = [{"id": "team-1", "body": {"name": "Field Operations"}}]
         session = _FakeSession(responses=[_FakeResponse(200, body)])
         adapter = _adapter(session)
 
-        self.assertEqual(adapter.list_clients(), body)
-        self.assertEqual(session.calls[0]["url"], f"{BASE_URL}/api/planner/clients")
+        self.assertEqual(adapter.list_teams(), body)
+        self.assertEqual(session.calls[0]["url"], f"{BASE_URL}/api/planner/teams")
 
 
 class GetProjectTests(unittest.TestCase):
@@ -131,13 +131,13 @@ class GetProjectTests(unittest.TestCase):
             adapter.get_project("missing")
 
 
-class GetClientTests(unittest.TestCase):
+class GetTeamTests(unittest.TestCase):
     def test_404_raises_key_error(self):
         session = _FakeSession(responses=[_FakeResponse(404, {})])
         adapter = _adapter(session)
 
         with self.assertRaises(KeyError):
-            adapter.get_client("missing")
+            adapter.get_team("missing")
 
 
 class CreateProjectTests(unittest.TestCase):

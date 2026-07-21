@@ -61,7 +61,7 @@ def notify_approvers(quote_id: str, slack, adapter) -> None:
         ver=quote["ver"],
         quote_number=body.get("quoteNumber"),
         name=body.get("name", "?"),
-        client=body.get("client", "?"),
+        team=body.get("team", "?"),
         grand_total=totals["grandTotal"],
         submitted_by=body.get("createdBy", "?"),
         stage=stage,

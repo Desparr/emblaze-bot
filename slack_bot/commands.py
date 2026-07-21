@@ -95,10 +95,10 @@ def _open_plan_modal(payload: dict, slack, adapter, identity: dict) -> dict:
 
 def _open_quote_modal(payload: dict, slack, adapter, identity: dict) -> dict:
     projects = adapter.list_projects(status="planning")
-    clients = adapter.list_clients()
+    teams = adapter.list_teams()
     if not projects:
         return _ephemeral("No plans in 'planning' status yet — create one with `/emblaze plan` first.")
     private_metadata = {"channel_id": payload["channel_id"], "actor_email": identity["email"]}
-    view = blocks.quote_modal(projects, clients, private_metadata=private_metadata)
+    view = blocks.quote_modal(projects, teams, private_metadata=private_metadata)
     slack.open_view(payload["trigger_id"], view)
     return {}

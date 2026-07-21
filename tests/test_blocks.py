@@ -40,12 +40,12 @@ class PlanModalTests(unittest.TestCase):
 
 
 class QuoteModalTests(unittest.TestCase):
-    def test_empty_projects_and_clients_produce_placeholder_options(self):
+    def test_empty_projects_and_teams_produce_placeholder_options(self):
         view = blocks.quote_modal([], [], private_metadata={})
         plan_block = next(b for b in view["blocks"] if b.get("block_id") == "plan_block")
-        client_block = next(b for b in view["blocks"] if b.get("block_id") == "client_block")
+        team_block = next(b for b in view["blocks"] if b.get("block_id") == "team_block")
         self.assertEqual(plan_block["element"]["options"][0]["value"], "__none__")
-        self.assertEqual(client_block["element"]["options"][0]["value"], "__none__")
+        self.assertEqual(team_block["element"]["options"][0]["value"], "__none__")
 
 
 class StatusMessageTextTests(unittest.TestCase):

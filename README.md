@@ -196,7 +196,7 @@ architectural calls are recorded as ADRs in `docs/decisions/` instead):
   for the `pending_l1`/`pending_l2` hops. This bot doesn't drive those two later
   transitions from Slack at all -- confirm against the real transition endpoint
   whether that's intentional (e.g. "sent" = quote doc emailed, "approved" =
-  client accepted, both presumably app-side) before adding UI for them.
+  team accepted, both presumably app-side) before adding UI for them.
   See `planner_adapter.py`'s module docstring.
 - **`RealPlannerAdapter` is a real HTTP client but its endpoint paths and
   request/response shapes are unverified** against the actual `emblaze`
@@ -270,6 +270,7 @@ decision changes):
 | [0003](docs/decisions/0003-build-to-starthere-contract-now.md) | Build to the Emtech `starthere` contract now, independent of when `emblaze` repo access arrives. |
 | [0004](docs/decisions/0004-day-based-plan-scheduling.md) | Day-based scheduling on the plan modal's technician line: shape decision (`scheduleUnit`/`activeDays`) and why. |
 | [0005](docs/decisions/0005-real-planner-adapter-http-client.md) | `RealPlannerAdapter` is a real HTTP client, unverified against the real API pending repo access. |
+| [0006](docs/decisions/0006-internal-teams-not-external-clients.md) | Quotes are for internal Emtech teams/departments, not external client companies — `client` renamed to `team` throughout. |
 
 ## Contacts
 

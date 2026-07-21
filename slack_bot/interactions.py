@@ -162,7 +162,7 @@ def _submit_quote(view: dict, slack, adapter) -> dict:
     values = view["state"]["values"]
 
     plan_id = _value(values, "plan_block", "plan_input")["selected_option"]["value"]
-    client_id = _value(values, "client_block", "client_input")["selected_option"]["value"]
+    team_id = _value(values, "team_block", "team_input")["selected_option"]["value"]
     mgmt_raw = _value(values, "mgmt_block", "mgmt_input")["value"] or ""
     supp_raw = _value(values, "supp_block", "supp_input")["value"] or ""
     submit_now = bool(_value(values, "submit_now_block", "submit_now_input")["selected_options"])
@@ -170,8 +170,8 @@ def _submit_quote(view: dict, slack, adapter) -> dict:
     errors = {}
     if plan_id == "__none__":
         errors["plan_block"] = "No plan selected."
-    if client_id == "__none__":
-        errors["client_block"] = "No client selected."
+    if team_id == "__none__":
+        errors["team_block"] = "No team selected."
 
     mgmt_pct = supp_pct = 0.0
     try:
@@ -187,22 +187,22 @@ def _submit_quote(view: dict, slack, adapter) -> dict:
         return {"response_action": "errors", "errors": errors}
 
     _run_in_background(
-        _create_quote_and_confirm, plan_id, client_id, mgmt_pct, supp_pct, submit_now, metadata, slack, adapter
+        _create_quote_and_confirm, plan_id, team_id, mgmt_pct, supp_pct, submit_now, metadata, slack, adapter
     )
     return {}
 
 
-def _create_quote_and_confirm(plan_id, client_id, mgmt_pct, supp_pct, submit_now, metadata, slack, adapter) -> None:
+def _create_quote_and_confirm(plan_id, team_id, mgmt_pct, supp_pct, submit_now, metadata, slack, adapter) -> None:
     actor_email = metadata["actor_email"]
 
     project = adapter.get_project(plan_id)
-    client = adapter.get_client(client_id)
+    team = adapter.get_team(team_id)
     quote_number = adapter.allocate_quote_number()
 
     quote_body = {
         "name": project["body"]["name"],
         "quoteNumber": quote_number,
-        "client": client["body"]["name"],
+        "team": team["body"]["name"],
         "status": "draft",
         "approvalStatus": "draft",
         "mgmtFeePercent": mgmt_pct,
@@ -232,7 +232,7 @@ def _create_quote_and_confirm(plan_id, client_id, mgmt_pct, supp_pct, submit_now
     )
 
     text = (
-        f":page_facing_up: Created quote #{quote_number} — *{quote_body['name']}* for {quote_body['client']}.\n"
+        f":page_facing_up: Created quote #{quote_number} — *{quote_body['name']}* for {quote_body['team']}.\n"
         f"Grand total: *${totals['grandTotal']:,.0f}*"
     )
 

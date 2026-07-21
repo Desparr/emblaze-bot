@@ -78,15 +78,15 @@ class PlannerAdapter(ABC):
         """[{id, body, ver}], optionally filtered by body['status']."""
 
     @abstractmethod
-    def list_clients(self) -> list:
-        """[{id, body}] where body = {name, contacts: [...]}."""
+    def list_teams(self) -> list:
+        """[{id, body}] where body = {name, contacts: [...]} -- internal Emtech teams/departments."""
 
     @abstractmethod
     def get_project(self, project_id: str) -> dict:
         """-> {id, body, ver}. Raise KeyError if missing."""
 
     @abstractmethod
-    def get_client(self, client_id: str) -> dict:
+    def get_team(self, team_id: str) -> dict:
         """-> {id, body}. Raise KeyError if missing."""
 
     @abstractmethod
@@ -138,9 +138,9 @@ class MockPlannerAdapter(PlannerAdapter):
 
         self._tier_weekly_rates = dict(DEFAULT_TIER_WEEKLY_RATES)
 
-        self._clients = {
-            "client-1": {"id": "client-1", "body": {"name": "Amazon", "contacts": []}, "ver": 1},
-            "client-2": {"id": "client-2", "body": {"name": "Vulcan Inc", "contacts": []}, "ver": 1},
+        self._teams = {
+            "team-1": {"id": "team-1", "body": {"name": "Field Operations", "contacts": []}, "ver": 1},
+            "team-2": {"id": "team-2", "body": {"name": "Engineering", "contacts": []}, "ver": 1},
         }
 
         self._projects = {}
@@ -188,8 +188,8 @@ class MockPlannerAdapter(PlannerAdapter):
             items = [p for p in items if p["body"].get("status") == status]
         return items
 
-    def list_clients(self) -> list:
-        return list(self._clients.values())
+    def list_teams(self) -> list:
+        return list(self._teams.values())
 
     def get_project(self, project_id: str) -> dict:
         project = self._projects.get(project_id)
@@ -197,11 +197,11 @@ class MockPlannerAdapter(PlannerAdapter):
             raise KeyError(f"no such project: {project_id}")
         return project
 
-    def get_client(self, client_id: str) -> dict:
-        client = self._clients.get(client_id)
-        if client is None:
-            raise KeyError(f"no such client: {client_id}")
-        return client
+    def get_team(self, team_id: str) -> dict:
+        team = self._teams.get(team_id)
+        if team is None:
+            raise KeyError(f"no such team: {team_id}")
+        return team
 
     def list_quotes(self) -> list:
         return list(self._quotes.values())
@@ -281,16 +281,20 @@ class RealPlannerAdapter(PlannerAdapter):
     that source and correct every path/shape below that doesn't match.
     Do not remove this notice when editing this class -- update it instead
     (e.g. to "verified against planner_api.py on <date> by <name>") once
-    that check has actually happened.
+    that check has actually happened. NOTE: the /api/planner/teams path
+    below (renamed from /api/planner/clients on 2026-07-21 per the
+    client->team domain rename, see docs/decisions/0006-internal-teams-not-
+    external-clients.md) is itself just as unverified as every other path
+    here -- it has not been checked against the real API either.
     =====================================================================
 
     Endpoint map assumed (verify all of these):
         GET    /api/planner/users                    -> get_users
         GET    /api/planner/config                    -> get_tier_weekly_rates
         GET    /api/planner/projects?status=<status>   -> list_projects
-        GET    /api/planner/clients                    -> list_clients
+        GET    /api/planner/teams                      -> list_teams
         GET    /api/planner/projects/<id>               -> get_project
-        GET    /api/planner/clients/<id>                -> get_client
+        GET    /api/planner/teams/<id>                  -> get_team
         POST   /api/planner/projects                    -> create_project
         PUT    /api/planner/projects/<id>               -> update_project
         POST   /api/planner/quote-number                -> allocate_quote_number
@@ -355,17 +359,17 @@ class RealPlannerAdapter(PlannerAdapter):
         params = {"status": status} if status is not None else None
         return self._request_or_raise("GET", "/api/planner/projects", params=params)
 
-    def list_clients(self) -> list:
-        return self._request_or_raise("GET", "/api/planner/clients")
+    def list_teams(self) -> list:
+        return self._request_or_raise("GET", "/api/planner/teams")
 
     def get_project(self, project_id: str) -> dict:
         return self._request_or_raise(
             "GET", f"/api/planner/projects/{project_id}", not_found_message=f"no such project: {project_id}"
         )
 
-    def get_client(self, client_id: str) -> dict:
+    def get_team(self, team_id: str) -> dict:
         return self._request_or_raise(
-            "GET", f"/api/planner/clients/{client_id}", not_found_message=f"no such client: {client_id}"
+            "GET", f"/api/planner/teams/{team_id}", not_found_message=f"no such team: {team_id}"
         )
 
     def list_quotes(self) -> list:

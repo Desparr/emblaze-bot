@@ -155,12 +155,12 @@ def plan_modal(tier_weekly_rates: dict, *, private_metadata: dict) -> dict:
     }
 
 
-def quote_modal(projects: list, clients: list, *, private_metadata: dict) -> dict:
+def quote_modal(projects: list, teams: list, *, private_metadata: dict) -> dict:
     project_options = [_option(p["body"]["name"], p["id"]) for p in projects] or [
         _option("No plans in 'planning' status", "__none__")
     ]
-    client_options = [_option(c["body"]["name"], c["id"]) for c in clients] or [
-        _option("No clients configured", "__none__")
+    team_options = [_option(t["body"]["name"], t["id"]) for t in teams] or [
+        _option("No teams configured", "__none__")
     ]
 
     return {
@@ -172,7 +172,7 @@ def quote_modal(projects: list, clients: list, *, private_metadata: dict) -> dic
         "close": _plain_text("Cancel"),
         "blocks": [
             _input("plan_block", "Plan", _static_select("plan_input", project_options)),
-            _input("client_block", "Client", _static_select("client_input", client_options)),
+            _input("team_block", "Team", _static_select("team_input", team_options)),
             _input("mgmt_block", "Management %", _text_input("mgmt_input", initial_value="10")),
             _input("supp_block", "Supplemental %", _text_input("supp_input", initial_value="8")),
             _input(
@@ -203,10 +203,10 @@ def reject_modal(*, private_metadata: dict) -> dict:
     }
 
 
-def approval_dm_blocks(*, quote_id: str, ver: int, quote_number: int, name: str, client: str, grand_total: float, submitted_by: str, stage: str, show_buttons: bool) -> list:
+def approval_dm_blocks(*, quote_id: str, ver: int, quote_number: int, name: str, team: str, grand_total: float, submitted_by: str, stage: str, show_buttons: bool) -> list:
     header = f"*Quote #{quote_number} — {name}*"
     details = (
-        f"Client: *{client}*\n"
+        f"Team: *{team}*\n"
         f"Grand total: *${grand_total:,.0f}*\n"
         f"Submitted by: {submitted_by}\n"
         f"Stage: `{stage}`"
