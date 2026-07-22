@@ -19,6 +19,8 @@ FAKE_SLACK_USERS = {
     "U_JOSH": "josh@emtech.us",
     "U_PRIYA": "priya@emtech.us",
     "U_ALEX": "alex@emtech.us",
+    "U_DESMOND": "desmondp@emtech.us",
+    "U_MATTJ": "mattj@emtech.us",
 }
 
 

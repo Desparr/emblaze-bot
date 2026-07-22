@@ -4,6 +4,7 @@ and block_actions (button clicks). Handbook 3.4-3.5.
 
 import json
 import logging
+from .commands import UNKNOWN_USER_MESSAGE, unknown_user_message
 import threading
 
 from . import blocks, math_utils
@@ -295,9 +296,10 @@ def handle_block_actions(payload: dict, slack, adapter) -> dict:
     identity = resolve_identity(slack_user_id, slack, adapter)
 
     if identity is None:
+        email = slack.lookup_user_email(slack_user_id)
         slack.post_to_response_url(
             payload["response_url"],
-            {"response_type": "ephemeral", "text": "I don't recognize your email in Emblaze's user list."},
+            {"response_type": "ephemeral", "text": unknown_user_message(email)},
         )
         return {}
 

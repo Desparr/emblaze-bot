@@ -15,6 +15,16 @@ class ResolveIdentityTests(unittest.TestCase):
         self.assertEqual(identity["email"], "simonn@emtech.us")
         self.assertEqual(identity["role"], "admin")
 
+    def test_desmond_resolves_to_allowlisted_role(self):
+        identity = resolve_identity("U_DESMOND", self.slack, self.adapter)
+        self.assertEqual(identity["email"], "desmondp@emtech.us")
+        self.assertEqual(identity["role"], "admin")
+
+    def test_matt_resolves_to_allowlisted_role(self):
+        identity = resolve_identity("U_MATTJ", self.slack, self.adapter)
+        self.assertEqual(identity["email"], "mattj@emtech.us")
+        self.assertEqual(identity["role"], "admin")
+
     def test_slack_user_with_no_matching_email_is_refused(self):
         # FakeSlackClient.lookup_user_email returns None for anyone not in its
         # FAKE_SLACK_USERS map -- e.g. a guest account.

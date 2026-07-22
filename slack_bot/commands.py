@@ -1,6 +1,7 @@
 """Slash command dispatch: /emblaze <ping|whoami|status|plan|quote>  (handbook 3.1, 3.6)."""
 
 import logging
+from typing import Optional
 
 from . import blocks
 from .identity import resolve_identity
@@ -10,6 +11,15 @@ logger = logging.getLogger("slack_bot.commands")
 UNKNOWN_USER_MESSAGE = (
     "I don't recognize your email in Emblaze's user list. Ask an admin to add you in Settings, then try again."
 )
+
+
+def unknown_user_message(email: Optional[str]) -> str:
+    if email:
+        return (
+            f"I don't recognize your email ({email}) in Emblaze's user list. "
+            "Ask an admin to add you in Settings, then try again."
+        )
+    return UNKNOWN_USER_MESSAGE
 
 HELP_TEXT = (
     "*Emblaze bot commands*\n"
@@ -43,7 +53,7 @@ def handle_slash_command(payload: dict, slack, adapter) -> dict:
 
     identity = resolve_identity(slack_user_id, slack, adapter)
     if identity is None:
-        return _ephemeral(UNKNOWN_USER_MESSAGE)
+        return _ephemeral(unknown_user_message(slack.lookup_user_email(slack_user_id)))
 
     if sub == "whoami":
         return _ephemeral(f"{identity['email']} · {identity['role']}")

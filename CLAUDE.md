@@ -13,7 +13,7 @@ Humans read `README.md`. This file is for an agent working in this repo.
 ## Run locally
 
 ```bash
-python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
+python3 scripts/bootstrap.py
 cp .env.example .env            # fill in local values; .env is gitignored
 .venv/bin/python -m unittest discover -s tests
 .venv/bin/python app.py         # http://localhost:8080 (PORT from .env, default 8080)

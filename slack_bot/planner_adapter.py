@@ -134,6 +134,7 @@ class MockPlannerAdapter(PlannerAdapter):
             "priya@emtech.us": {"role": "approver_l1", "modules": None, "name": "Priya"},
             "alex@emtech.us": {"role": "member", "modules": None, "name": "Alex"},
             "desmondp@emtech.us": {"role": "admin", "modules": None, "name": "Desmond P."},
+            "mattj@emtech.us": {"role": "admin", "modules": None, "name": "Matt J."},
         }
 
         self._tier_weekly_rates = dict(DEFAULT_TIER_WEEKLY_RATES)

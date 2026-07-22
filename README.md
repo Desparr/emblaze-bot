@@ -58,10 +58,11 @@ docs/decisions/            ADRs -- read these before assuming this app looks lik
 Requires Python 3.9+ (or Docker, to mirror production).
 
 ```bash
-python3 -m venv .venv
-.venv/bin/pip install -r requirements.txt
+python3 scripts/bootstrap.py
 cp .env.example .env
 ```
+
+If you move the repository or the virtualenv gets stale, rerun `scripts/bootstrap.py`.
 
 Edit `.env`: for pure local testing you can leave `SLACK_SIGNING_SECRET` as any
 string (just make sure `scripts/sign_request.py --secret` matches it) and leave
@@ -172,6 +173,55 @@ names when hand-writing a payload.
 
 Tamper with the signature or send a stale timestamp and you'll get `401` --
 that's guardrail 3.7 ("verify the signature before reading anything else").
+
+## Test in Slack workspace
+
+To exercise the bot from a real Slack app, keep the app running locally and
+expose it with a public HTTPS tunnel such as Cloudflare Tunnel or ngrok. Slack
+must be able to reach the following URLs:
+
+- `https://<your-public-host>/slack/commands`
+- `https://<your-public-host>/slack/interactions`
+
+Use these settings in your Slack app:
+
+1. Create a Slack app in the workspace you want to test.
+2. Enable the `/emblaze` slash command and point it at `/slack/commands`.
+3. Enable Interactivity and point it at `/slack/interactions`.
+4. Install the app to the workspace.
+5. Copy the Signing Secret into `SLACK_SIGNING_SECRET`.
+6. Copy the Bot User OAuth Token into `SLACK_BOT_TOKEN`.
+7. Set `SLACK_CLIENT=real` in `.env`.
+8. Keep `PLANNER_ADAPTER=mock` for a safe Slack-only smoke test, or switch to
+   `real` only if you also want to exercise the live Emblaze backend.
+
+Minimum Slack scopes for the current bot flow:
+
+- `commands`
+- `chat:write`
+- `users:read`
+- `users:read.email`
+
+Suggested smoke-test order once Slack is pointed at your tunnel:
+
+1. `/emblaze ping`
+2. `/emblaze whoami`
+3. `/emblaze status`
+4. `/emblaze plan`
+5. `/emblaze quote`
+
+If you are testing modals, use a workspace user whose email exists in the bot's
+identity mapping. Unknown emails are refused by design.
+
+To launch the bot and tunnel together from one command:
+
+```bash
+python3 scripts/slack_tunnel.py
+```
+
+Install either `cloudflared` or `ngrok` first. The script starts the app on
+`http://127.0.0.1:8080`, waits for `/healthz` to come up, then launches the
+first tunnel tool it finds and lets you copy the public HTTPS URL into Slack.
 
 ## Plan scheduling: week or day
 
